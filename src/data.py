@@ -25,14 +25,11 @@ def cargar_datos() -> dict[str, pd.DataFrame]:
     df = pd.read_excel(ruta_tabla, sheet_name=HOJA_TABLA, engine="openpyxl")
 
     # SUP_MAX: superficie máxima incorporable por categoría y territorio
+    # El fichero tiene filas ARABA, BIZKAIA, GIPUZKOA (sin fila EUSKADI).
+    # El código del simulador calcula el total de Euskadi sumando las tres filas.
     ruta_sup = DATA_DIR / "SUP_MAX_SIGPAC.xlsx"
     if ruta_sup.exists():
         sup_max_df = pd.read_excel(ruta_sup, sheet_name="Superficie", engine="openpyxl")
-        fila_eus = sup_max_df.select_dtypes(include="number").sum().to_dict()
-        fila_eus["SUPERFICIE DECLARADA SIGPAC"] = "EUSKADI"
-        sup_max_df = pd.concat(
-            [sup_max_df, pd.DataFrame([fila_eus])], ignore_index=True
-        )
     else:
         sup_max_df = pd.DataFrame()
 
