@@ -25,10 +25,9 @@ def cargar_datos() -> dict[str, pd.DataFrame]:
     df = pd.read_excel(ruta_tabla, sheet_name=HOJA_TABLA, engine="openpyxl")
 
     # SUP_MAX: superficie máxima incorporable por categoría y territorio
-    ruta_sup = DATA_DIR / "SUP_MAX_HORT_FRUT_OLIVAR_VIÑEDO_SIGPAC.xlsx"
+    ruta_sup = DATA_DIR / "SUP_MAX_SIGPAC.xlsx"
     if ruta_sup.exists():
         sup_max_df = pd.read_excel(ruta_sup, sheet_name="Superficie", engine="openpyxl")
-        # Añadir fila EUSKADI como suma de los tres territorios
         fila_eus = sup_max_df.select_dtypes(include="number").sum().to_dict()
         fila_eus["SUPERFICIE DECLARADA SIGPAC"] = "EUSKADI"
         sup_max_df = pd.concat(
@@ -38,7 +37,7 @@ def cargar_datos() -> dict[str, pd.DataFrame]:
         sup_max_df = pd.DataFrame()
 
     # CULTIVOS: mapa cultivo → categoría SIGPAC
-    ruta_cultivos = DATA_DIR / "Tabla_Cultivos_PAC_Hort_Frut_Olivar_Viñedo.xlsx"
+    ruta_cultivos = DATA_DIR / "Tabla_Cultivos_PAC.xlsx"
     if ruta_cultivos.exists():
         cultivos_cat_df = pd.read_excel(
             ruta_cultivos, sheet_name="Sup", engine="openpyxl"
