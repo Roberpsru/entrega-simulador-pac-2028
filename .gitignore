@@ -1,0 +1,21 @@
+# Entornos virtuales
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Ficheros con datos personales (NUNCA subir al repo)
+data/*LIMPIA*.xlsx
+data/*_ORIGINAL*.xlsx
+
+# OS
+.DS_Store
+Thumbs.db
