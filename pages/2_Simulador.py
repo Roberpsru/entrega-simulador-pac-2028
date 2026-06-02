@@ -596,6 +596,16 @@ del Ministerio de Agricultura.
         )
         return base + ha_externas_terr
 
+    def _sup_sim_con_derecho(df_in):
+        """Parte de la superficie simulada que YA tenía derecho asignado:
+        min(DERECHOS, SUP_ABRS) de las explotaciones que permanecen activas."""
+        act = df_in[df_in["IMP_SIMULADO"] > 0]
+        if "DERECHOS" not in act.columns or "SUP_Det_Ctr_ABRS" not in act.columns:
+            return 0.0
+        return float(
+            act[["DERECHOS", "SUP_Det_Ctr_ABRS"]].fillna(0).min(axis=1).sum()
+        )
+
     ha_externas_por_terr = p.get("ha_externas_por_terr", {})
     total_nuevas_ha_externas = p.get("total_nuevas_ha_externas", 0.0)
 
@@ -610,6 +620,8 @@ del Ministerio de Agricultura.
         n_s = int((df_s["IMP_SIMULADO"] > 0).sum())
         sup_act = _sup_activada_actual(df_a[df_a["IMP_AYUDA_TOTAL"] > 0])
         sup_sim = _sup_simulada(df_s, ha_externas_por_terr.get(terr, 0.0))
+        sup_sim_con = _sup_sim_con_derecho(df_s)
+        sup_sim_sin = max(0.0, sup_sim - sup_sim_con)
         imp_med_a = (
             float(df_a[df_a["IMP_AYUDA_TOTAL"] > 0]["IMP_AYUDA_TOTAL"].mean())
             if n_a > 0 else 0.0
@@ -625,6 +637,7 @@ del Ministerio de Agricultura.
             "Δ Benef.":               fmt_int(n_s - n_a),
             "Sup. activada actual":   fmt_ha(sup_act),
             "Sup. activada simulada": fmt_ha(sup_sim),
+            "Sup. sin derecho (incl.)": fmt_ha(sup_sim_sin),
             "Δ Superficie":           fmt_ha(sup_sim - sup_act),
             "Imp. medio actual":      fmt_euros(imp_med_a),
             "Imp. medio simulado":    fmt_euros(imp_med_s),
@@ -666,6 +679,7 @@ del Ministerio de Agricultura.
             "Δ Benef.":               f"+~{fmt_int(p['total_nuevas_explot'])}",
             "Sup. activada actual":   "—",
             "Sup. activada simulada": fmt_ha(total_nuevas_ha_externas),
+            "Sup. sin derecho (incl.)": fmt_ha(total_nuevas_ha_externas),
             "Δ Superficie":           fmt_ha(total_nuevas_ha_externas),
             "Imp. medio actual":      "—",
             "Imp. medio simulado":    f"~{fmt_euros(p['nuevo_valor_ha'] * _sup_media_nuevas)}",
@@ -679,8 +693,19 @@ del Ministerio de Agricultura.
         "Δ Benef.":               [f["Δ Benef."] for f in filas_terr],
         "Sup. activada actual":   [f["Sup. activada actual"] for f in filas_terr],
         "Sup. activada simulada": [f["Sup. activada simulada"] for f in filas_terr],
+        "Sup. sin derecho (incl.)": [f["Sup. sin derecho (incl.)"] for f in filas_terr],
         "Δ Superficie":           [f["Δ Superficie"] for f in filas_terr],
     }))
+
+    st.caption(
+        "La **Sup. activada actual** es la que hoy genera pago, limitada por los "
+        "derechos: min(derechos, superficie ABRS). La **Sup. activada simulada** usa la "
+        "superficie ABRS completa, porque el modelo paga por hectárea; por eso incluye la "
+        "superficie ABRS **sin derecho asignado** (columna **Sup. sin derecho (incl.)**), "
+        "que hoy no se activa. Esa es la razón de que la superficie simulada pueda superar "
+        "a la actual aunque se excluyan explotaciones por el umbral: el umbral la reduce, "
+        "pero la activación de la superficie sin derecho la compensa hasta umbrales altos."
+    )
 
     st.markdown("<br>", unsafe_allow_html=True)
 
