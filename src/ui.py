@@ -1,7 +1,4 @@
-"""Helpers de UI, formato, estilos y utilidades visuales.
-
-Versión sin análisis IA: no requiere anthropic ni pdfplumber.
-"""
+"""Helpers de UI, formato, estilos y utilidades visuales."""
 from __future__ import annotations
 
 from pathlib import Path

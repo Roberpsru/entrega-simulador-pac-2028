@@ -805,12 +805,6 @@ del Ministerio de Agricultura.
         )
     )
 
-    # Cálculo silencioso de ganadores/perdedores para el payload IA (Bloque G)
-    _delta_serie = df_sim["IMP_SIMULADO"] - df_sim["IMP_AYUDA_TOTAL"]
-    n_gana = int((_delta_serie > 1).sum())
-    n_pierde = int((_delta_serie < -1).sum())
-    delta_med_global = float(_delta_serie.median())
-
     # ── Bloque F — Asociadas ganaderas (situación actual, por territorio) ─
     titulo_subapartado("Ayudas asociadas ganaderas — situación actual")
 
@@ -878,5 +872,3 @@ del Ministerio de Agricultura.
         st.info(" · ".join(resumen_gan))
     else:
         st.caption("No se han encontrado columnas de ayudas asociadas ganaderas.")
-
-    # ── Bloque G — Análisis IA ───────────────────────────────────────────

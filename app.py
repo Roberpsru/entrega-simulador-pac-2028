@@ -75,8 +75,7 @@ with col_consulta:
         <div style="font-size:14px; color:#333333; line-height:1.6;">
         Explora la distribución actual de las ayudas directas. Filtra por
         territorio, género, edad, tipo de ayuda, cultivo y más para analizar
-        cualquier subconjunto del padrón. Incluye análisis con IA para cada
-        sección.
+        cualquier subconjunto del padrón.
         </div></div>
         """,
         unsafe_allow_html=True,

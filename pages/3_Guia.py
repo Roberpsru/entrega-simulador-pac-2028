@@ -158,14 +158,11 @@ tablas e indicadores— se recalculan automáticamente sobre el subconjunto sele
 <p style="margin:0 0 0.6rem 0;"><b>Filtros disponibles:</b> territorio, género, tramo de edad, tramo de superficie,
 dedicación a la agricultura, condición de agricultor activo, ingresos agrarios
 superiores a 15.000 € y condición jurídica.</p>
-<p style="margin:0 0 0.6rem 0;"><b>Bloques de análisis:</b> resumen general (derechos, superficie y importes por tipo
+<p style="margin:0;"><b>Bloques de análisis:</b> resumen general (derechos, superficie y importes por tipo
 y territorio), condición de agricultor activo y elegibilidad, distribución por
 territorio y tramos de ayuda, derechos ABRS, tipos de ayuda, perfil de los
 beneficiarios (edad, género, formación, dedicación) y distribución por superficie
 y cultivos.</p>
-<p style="margin:0;">Cada bloque incluye un botón de <b>análisis con inteligencia artificial</b> que
-genera un comentario técnico orientado a la toma de decisiones, fundamentado en
-la normativa PAC vigente y en los datos del subconjunto seleccionado.</p>
 </div>
 """, unsafe_allow_html=True)
 
