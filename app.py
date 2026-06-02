@@ -56,7 +56,7 @@ st.markdown(
     'Trabaja sobre los datos reales de pagos directos de la campaña 2024: '
     '<b>7.283 titulares</b> analizados (de los que <b>6.694</b> percibieron '
     'ayuda en el ejercicio), <b>42.353.115,52 €</b> de presupuesto y '
-    '<b>158.597,29 ha</b> declaradas en Araba, Gipuzkoa y Bizkaia.'
+    '<b>156.034,84 ha</b> declaradas en Araba, Gipuzkoa y Bizkaia.'
     '</p>',
     unsafe_allow_html=True,
 )

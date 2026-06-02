@@ -42,8 +42,8 @@ de ningún tipo de ayuda (ni directa, ni asociada agrícola, ni asociada ganader
 <p style="margin:0;">
 En ambos casos, el importe cobrado en 2024 es 0 € y no aportan superficie declarada,
 animales ni cultivos al análisis. El importe global analizado (<b>42.353.115,52 €</b>)
-y la superficie declarada (<b>158.597,29 ha</b>) corresponden íntegramente a los
-<b>7.283 titulares analizados</b>.
+corresponde a los <b>7.283 titulares analizados</b>, y la superficie declarada por las
+<b>6.694 explotaciones perceptoras de ayuda</b> asciende a <b>156.034,84 ha</b>.
 </p>
 </div>
 """, unsafe_allow_html=True)
