@@ -35,8 +35,6 @@ Opcionalmente, si está presente, se utiliza también:
 
 Una aplicación web Streamlit que permite **consultar** la distribución actual de las ayudas directas de la PAC en Euskadi y **simular reformas** para el período de programación 2028-2032, manteniendo el presupuesto global constante.
 
-**Esta versión no incluye los botones de análisis con IA** ("Aspectos a tener en cuenta") y no requiere API key de Anthropic.
-
 ## Cifras clave (campaña 2024)
 
 | Métrica | Valor |
