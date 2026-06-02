@@ -77,7 +77,8 @@ def situacion_actual(df: pd.DataFrame, umbral: float = 300) -> pd.DataFrame:
         g = g_all if terr == "Euskadi" else g_all[g_all["TH_DESC"] == terr]
         n = len(g)
         imp_total = float(g["IMP_AYUDA_TOTAL"].sum())
-        sup_decl = float(g["_SUP_CAP"].sum())
+        # Superficie activada = la que de verdad genera pago hoy = min(derechos, ABRS).
+        # NO se usa SUPERFICIE_TOTAL_DESPUES_CAP.
         sup_act = float(
             g[["DERECHOS", "SUP_Det_Ctr_ABRS"]].fillna(0).min(axis=1).sum()
         )
@@ -85,8 +86,7 @@ def situacion_actual(df: pd.DataFrame, umbral: float = 300) -> pd.DataFrame:
         filas.append({
             "Territorio": terr,
             "Nº de beneficiarios": n,
-            "Superficie total declarada (ha)": round(sup_decl, 2),
-            "Superficie con derecho / activada (ha)": round(sup_act, 2),
+            "Superficie activada (ha)": round(sup_act, 2),
             "Importe total (€)": round(imp_total, 2),
             "Nº de derechos": round(derechos, 2),
             "Importe medio (€/benef.)": round(imp_total / n, 2) if n else 0.0,
