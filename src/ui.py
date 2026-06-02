@@ -146,7 +146,7 @@ def tarjeta(
 
 def mostrar_tabla(df: pd.DataFrame, height: int | None = None) -> None:
     """Muestra un DataFrame con formato consistente."""
-    kwargs: dict = {"use_container_width": True}
+    kwargs: dict = {"width": "stretch"}
     if height:
         kwargs["height"] = height
     st.dataframe(df, **kwargs)
