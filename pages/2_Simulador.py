@@ -354,8 +354,12 @@ if simular:
     # excluir por umbral, de modo que el importe de las explotaciones excluidas
     # se redistribuye entre las que permanecen (en vez de perderse). Así, al
     # bajar la superficie con presupuesto fijo, el valor por hectárea sube.
+    # "Superficie ABRS sin derecho" no se suma al denominador (ya está incluida
+    # en SUP_Det_Ctr_ABRS), pero al seleccionarla también debe ejecutarse el
+    # modelo de pago por superficie para que esa superficie quede activada y el
+    # valor por hectárea se recalcule frente al modelo actual basado en derechos.
     presupuesto_constante = float(benef["IMP_AYUDA_TOTAL"].sum())
-    if total_nuevas_ha_externas > 0 or umbral > 0:
+    if total_nuevas_ha_externas > 0 or umbral > 0 or ha_abrs_sin_derecho > 0:
         df_activos_sim, nuevo_valor_ha, coste_nueva_sup = simular_superficie(
             benef_activos, total_nuevas_ha_externas,
             presupuesto_total=presupuesto_constante,
