@@ -42,7 +42,7 @@ Una aplicación web Streamlit que permite **consultar** la distribución actual 
 | Titulares analizados | 7.283 |
 | — de ellos, perceptores de ayuda en 2024 | 6.694 |
 | Importe total de ayudas | 42.353.115,52 € |
-| Superficie declarada | 257.360,88 ha |
+| Superficie declarada | 158.597,29 ha |
 | Territorios | Araba (1.634) · Gipuzkoa (3.025) · Bizkaia (2.624) |
 
 ## Módulos
