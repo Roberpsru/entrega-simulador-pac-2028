@@ -20,8 +20,14 @@ Este archivo contiene el padrón de 7.283 titulares analizados (versión anonimi
 | Fichero | Descripción |
 |---|---|
 | `data/TABLA_GENERAL_PAGOS_DIRECTOS_2024_ANONIMIZADA.xlsx` | Tabla maestra de pagos directos 2024 |
-| `data/SIGPAC.xlsx` | Superficies admisibles PAC por uso y territorio |
-| `data/VALOR_MEDIO_REGIONES_ABRS.xlsx` | Valor medio por región agronómica |
+| `data/SUP_MAX_SIGPAC.xlsx` | Superficie máxima incorporable por categoría SIGPAC y territorio |
+| `data/Tabla_Cultivos_PAC.xlsx` | Mapa cultivo → categoría SIGPAC |
+
+Opcionalmente, si está presente, se utiliza también:
+
+| Fichero (opcional) | Descripción |
+|---|---|
+| `data/VALOR_MEDIO_REGIONES_ABRS.xlsx` | Valor medio por región agronómica ABRS (hoja `VMR_Derechos`). Si no existe, el detalle de valor medio por región del bloque «Derechos de ayuda ABRS» de la Consulta simplemente no se muestra. |
 
 ---
 
