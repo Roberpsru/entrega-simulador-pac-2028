@@ -15,7 +15,7 @@ Antes de ejecutar la aplicación, coloca en la carpeta `data/` el fichero maestr
 data/TABLA_GENERAL_PAGOS_DIRECTOS_2024_ANONIMIZADA.xlsx
 ```
 
-Este archivo contiene el padrón de 7.283 titulares (versión anonimizada, sin NIF ni nombre del titular). También deben estar presentes:
+Este archivo contiene el padrón de 7.283 titulares analizados (versión anonimizada, sin NIF ni nombre del titular), de los cuales 6.694 percibieron ayuda en la campaña 2024. También deben estar presentes:
 
 | Fichero | Descripción |
 |---|---|
@@ -35,7 +35,8 @@ Una aplicación web Streamlit que permite **consultar** la distribución actual 
 
 | Métrica | Valor |
 |---|---|
-| Titulares activos | 7.283 |
+| Titulares analizados | 7.283 |
+| — de ellos, perceptores de ayuda en 2024 | 6.694 |
 | Importe total de ayudas | 42.353.115,52 € |
 | Superficie declarada | 257.360,88 ha |
 | Territorios | Araba (1.634) · Gipuzkoa (3.025) · Bizkaia (2.624) |

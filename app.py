@@ -54,7 +54,8 @@ st.markdown(
     'desarrollada por <b>Hazi</b> para el <b>Departamento de Desarrollo '
     'Económico, Sostenibilidad y Medio Ambiente del Gobierno Vasco</b>. '
     'Trabaja sobre los datos reales de pagos directos de la campaña 2024: '
-    '<b>7.283 titulares</b>, <b>42.353.115,52 €</b> de presupuesto y '
+    '<b>7.283 titulares</b> analizados (de los que <b>6.694</b> percibieron '
+    'ayuda en el ejercicio), <b>42.353.115,52 €</b> de presupuesto y '
     '<b>257.360,88 ha</b> declaradas en Araba, Gipuzkoa y Bizkaia.'
     '</p>',
     unsafe_allow_html=True,

@@ -24,8 +24,10 @@ La aplicación trabaja con los datos reales de los pagos directos de la PAC en E
 correspondientes a la campaña 2024. La información de partida procede del padrón de
 titulares relacionados con la PAC en el ejercicio 2024, que contiene <b>7.692 registros</b>.
 De ese conjunto, el análisis se realiza sobre <b>7.283 titulares (94,7 %)</b>, que son
-aquellos que efectivamente percibieron alguna ayuda en la campaña y cuentan con los datos
-completos para el análisis.
+aquellos que cuentan con derechos asignados y/o percepción de ayudas y disponen de los
+datos completos para el análisis. De estos 7.283, <b>6.694 percibieron efectivamente
+alguna ayuda</b> en la campaña 2024; los <b>589 restantes</b> figuran con derechos o
+superficie declarada pero con importe cobrado de 0 € en el ejercicio.
 </p>
 <p style="margin:0 0 0.6rem 0;">
 Se han excluido <b>409 registros (5,3 %)</b> que figuran en el padrón pero no aportan
@@ -41,7 +43,7 @@ de ningún tipo de ayuda (ni directa, ni asociada agrícola, ni asociada ganader
 En ambos casos, el importe cobrado en 2024 es 0 € y no aportan superficie declarada,
 animales ni cultivos al análisis. El importe global analizado (<b>42.353.115,52 €</b>)
 y la superficie declarada (<b>257.360,88 ha</b>) corresponden íntegramente a los
-<b>7.283 titulares activos</b>.
+<b>7.283 titulares analizados</b>.
 </p>
 </div>
 """, unsafe_allow_html=True)
@@ -57,8 +59,9 @@ st.markdown("""
 <div style="font-size:15px; line-height:1.6; color:#222; text-align:justify;">
 <p style="margin:0 0 0.6rem 0;">Los pagos directos de la PAC representan el principal instrumento de apoyo a la
 renta de las explotaciones agrarias en Euskadi. Con un presupuesto anual de
-<b>42,35 millones de euros</b> y <b>7.283 explotaciones beneficiarias</b> en la
-campaña 2024, su diseño tiene implicaciones directas sobre la viabilidad económica
+<b>42,35 millones de euros</b> y <b>7.283 explotaciones titulares</b> analizadas
+(de las que 6.694 percibieron ayuda) en la campaña 2024, su diseño tiene
+implicaciones directas sobre la viabilidad económica
 de miles de familias agricultoras y ganaderas en Araba, Bizkaia y Gipuzkoa.</p>
 <p style="margin:0 0 0.6rem 0;">El horizonte de programación <b>2028-2032</b> abre un proceso de negociación en el
 que el Gobierno Vasco —a través del Departamento de Desarrollo Económico,

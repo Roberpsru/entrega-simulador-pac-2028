@@ -19,3 +19,6 @@ data/*_ORIGINAL*.xlsx
 # OS
 .DS_Store
 Thumbs.db
+
+# Ficheros temporales de Excel
+~$*
