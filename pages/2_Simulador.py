@@ -270,9 +270,13 @@ if tipos_sel:
 
     def _max_incorporable(tipo: str) -> float:
         if tipo == "Superficie ABRS sin derecho":
+            # Solo cuenta la superficie sin derecho de la población ACTIVA:
+            # subconjunto filtrado (sidebar) y por encima del umbral mínimo.
+            # Las explotaciones excluidas no aportan su superficie sin derecho.
+            activos = benef[benef["IMP_AYUDA_TOTAL"] >= umbral] if umbral > 0 else benef
             exceso = (
-                benef_global["SUP_Det_Ctr_ABRS"].fillna(0)
-                - benef_global["DERECHOS"].fillna(0)
+                activos["SUP_Det_Ctr_ABRS"].fillna(0)
+                - activos["DERECHOS"].fillna(0)
             ).clip(lower=0)
             return float(exceso.sum())
         col_sig = CAT_SIGPAC[tipo]
