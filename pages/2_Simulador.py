@@ -349,10 +349,16 @@ if simular:
         benef_activos = benef.copy()
         excluidos_df = pd.DataFrame()
 
-    # PASO 2: superficie sobre los activos (solo nuevas externas al denominador)
+    # PASO 2: superficie sobre los activos (solo nuevas externas al denominador).
+    # El presupuesto se mantiene constante = total del subconjunto ANTES de
+    # excluir por umbral, de modo que el importe de las explotaciones excluidas
+    # se redistribuye entre las que permanecen (en vez de perderse). Así, al
+    # bajar la superficie con presupuesto fijo, el valor por hectárea sube.
+    presupuesto_constante = float(benef["IMP_AYUDA_TOTAL"].sum())
     if total_nuevas_ha_externas > 0 or umbral > 0:
         df_activos_sim, nuevo_valor_ha, coste_nueva_sup = simular_superficie(
             benef_activos, total_nuevas_ha_externas,
+            presupuesto_total=presupuesto_constante,
         )
     else:
         df_activos_sim = benef_activos.copy()

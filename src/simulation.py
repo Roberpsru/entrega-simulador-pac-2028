@@ -14,6 +14,7 @@ import pandas as pd
 def simular_superficie(
     df: pd.DataFrame,
     nuevas_ha_externas: float = 0.0,
+    presupuesto_total: float | None = None,
 ) -> tuple[pd.DataFrame, float, float]:
     """Redistribuye el presupuesto entre los beneficiarios activos del DataFrame.
 
@@ -24,6 +25,10 @@ def simular_superficie(
     nuevas_ha_externas : Hectáreas externas (viñedo, frutales, hortícolas)
          a añadir al denominador.  Las ha ABRS sin derecho ya están en
          ``SUP_Det_Ctr_ABRS`` y no se suman aquí.
+    presupuesto_total : Presupuesto constante a repartir.  Si se indica
+         (p. ej. el total del subconjunto ANTES de excluir explotaciones por
+         umbral), el importe de las excluidas se redistribuye entre las que
+         permanecen.  Si es ``None``, se deriva del propio ``df``.
 
     Retorna
     -------
@@ -33,7 +38,10 @@ def simular_superficie(
     """
     df = df.copy()
 
-    presupuesto_total = float(df["IMP_AYUDA_TOTAL"].sum())
+    if presupuesto_total is None:
+        presupuesto_total = float(df["IMP_AYUDA_TOTAL"].sum())
+    else:
+        presupuesto_total = float(presupuesto_total)
 
     if "SUP_Det_Ctr_ABRS" in df.columns:
         sup_abrs = df["SUP_Det_Ctr_ABRS"].fillna(0)
