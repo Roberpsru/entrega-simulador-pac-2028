@@ -1,10 +1,12 @@
 """ENTREGABLE — >300  vs  >300 + superficie adicional (REPARTO REAL POR TITULAR).
 
 Escenario A: umbral 300 (como la app).
-Escenario B: umbral 300 + incorporación de superficie de viñedo/txakoli, frutales/
-frutos secos y hortícolas al máximo del Filtro B, REPARTIDA ENTRE TERRITORIOS SEGÚN
-LA SUPERFICIE DE CULTIVO REALMENTE DECLARADA POR TITULAR EN CADA TH (no por proporción
-SIGPAC). La ABRS sin derecho NO se vuelve a sumar (ya está en la superficie activada de A).
+Escenario B: umbral 300 + incorporación de las CUATRO categorías del Filtro B:
+viñedo/txakoli, frutales/frutos secos y hortícolas (externas, REPARTIDAS ENTRE
+TERRITORIOS SEGÚN LA SUPERFICIE DE CULTIVO REALMENTE DECLARADA POR TITULAR EN CADA TH,
+no por proporción SIGPAC) MÁS la reactivación de la superficie ABRS sin derecho de los
+activos (repartida titular a titular según su exceso). En el modelo nuevo esa superficie
+sin derecho NO está incluida en la superficie activada de A: aquí se reactiva por completo.
 
 Reutiliza el motor real src.simulation.simular_superficie, calcular_derivadas, y las
 funciones cargar/validar/mostrar de entregables_300_500.py. La distribución real por
@@ -76,14 +78,20 @@ def main():
     if not validar(sim_a):
         print("\n*** PARADA: A no coincide con la app. ***"); sys.exit(1)
 
-    # ── B: motor con superficie externa al denominador (escalar total) ──
-    df_act, vh, _ = simular_superficie(activos, total_externas, presupuesto_total=presupuesto)
+    # ── B: motor con externas al denominador + reactivación TOTAL de la ABRS
+    # sin derecho de los activos (max_abrs), repartida titular a titular. Con
+    # reactivación completa, SUP_ACTIVABLE = ABRS completa, así que la superficie
+    # activada por territorio coincide con VALID_B (139.068,13 + 13.936,08 + externas).
+    df_act, vh, _ = simular_superficie(
+        activos, total_externas, presupuesto_total=presupuesto,
+        ha_abrs_sin_derecho_reactivada=max_abrs,
+    )
 
     filas, sup_ex_terr = {}, {}
     for terr in TERRS:
         act_t = df_act[(df_act["TH_DESC"] == terr) & (df_act["IMP_SIMULADO"] > 0)]
         benef_ex = int(len(act_t))
-        sup_ex = float(act_t["SUP_Det_Ctr_ABRS"].fillna(0).sum())
+        sup_ex = float(act_t["SUP_ACTIVABLE"].fillna(0).sum())
         sup_ex_terr[terr] = sup_ex
         ra = sim_a.set_index("Territorio").loc[terr]
         filas[terr] = dict(
@@ -147,9 +155,11 @@ def main():
         return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".")
 
     NOTA = (
-        "NOTA 1 — La superficie ABRS sin derecho NO se suma en B: ya está incluida en la "
-        f"superficie activada del Escenario A ({_e(eus['sup_a'])} ha). En la base >300 asciende "
-        f"a {_e(max_abrs)} ha. En B solo se incorporan los cultivos externos ({_e(total_externas)} ha).  "
+        "NOTA 1 — El Escenario B incorpora las CUATRO categorías del Filtro B. Sobre la "
+        f"superficie activada de A ({_e(eus['sup_a'])} ha = min(derechos, ABRS), la que hoy "
+        "genera pago) se REACTIVA por completo la superficie ABRS sin derecho de los activos "
+        f"({_e(max_abrs)} ha, repartida titular a titular según su exceso) y se añaden los "
+        f"cultivos externos ({_e(total_externas)} ha), hasta {_e(eus['sup_b'])} ha en B.  "
         "NOTA 2 — Las externas se reparten por territorio según el DATO REAL POR TITULAR "
         "(superficie de cultivo declarada en cada TH), no por proporción SIGPAC.  "
         "NOTA 3 — Los cuadros mantienen las explotaciones EXISTENTES. Esa superficie generaría "
@@ -160,7 +170,8 @@ def main():
     )
 
     # ── Mostrar ──
-    print(f"\n  Valor/ha: A = {presupuesto/float(activos['SUP_Det_Ctr_ABRS'].fillna(0).sum()):,.2f}  ->  B = {vh:,.2f}")
+    sup_act_a = float(activos[["DERECHOS", "SUP_Det_Ctr_ABRS"]].fillna(0).min(axis=1).sum())
+    print(f"\n  Valor/ha: A = {presupuesto/sup_act_a:,.2f}  ->  B = {vh:,.2f}")
     mostrar("CUADRO 1 — Nº de beneficiarios (existentes)", c1)
     mostrar("CUADRO 2 — Superficie activada (ha)", c2)
     mostrar("CUADRO 3 — Importe medio por explotación (€)", c3)

@@ -78,16 +78,19 @@ with st.expander(
 Explora el efecto económico de hipótesis de reforma de la PAC 2028-2032 sobre las
 explotaciones de Euskadi, partiendo de datos reales de la campaña 2024.
 El presupuesto total se mantiene constante en todos los escenarios.</p>
-<p style="margin:0 0 0.6rem 0;"><b>Modelo de cálculo: pago único por superficie ABRS</b><br>
+<p style="margin:0 0 0.6rem 0;"><b>Modelo de cálculo: pago único por superficie activable</b><br>
 La simulación sustituye el sistema actual (basado en derechos históricos con valores
-diferenciados por región) por un modelo de pago uniforme por hectárea de superficie
-ABRS declarada. El nuevo valor por hectárea = presupuesto total ÷ (superficie ABRS
-total activa + nueva superficie externa incorporada).</p>
+diferenciados por región) por un modelo de pago uniforme por hectárea. La superficie
+activable de cada explotación es la que hoy genera pago: el mínimo entre sus derechos
+y su superficie ABRS declarada — min(derechos, ABRS). El nuevo valor por hectárea =
+presupuesto total ÷ (superficie activable total + superficie ABRS sin derecho reactivada
++ nueva superficie externa incorporada).</p>
 <p style="margin:0 0 0.6rem 0;"><b>Comparación actual vs simulado</b><br>
 - <b>Situación actual</b>: el valor de referencia es el importe total ÷ número de derechos
 activados (~298 €/derecho). Este es el denominador real del sistema vigente.<br>
-- <b>Situación simulada</b>: el valor es el importe total ÷ superficie ABRS elegible total
-(incluida la que actualmente carece de derechos asignados) + nueva superficie externa.<br>
+- <b>Situación simulada</b>: el valor es el importe total ÷ superficie activable total
+(min(derechos, ABRS) de las explotaciones que permanecen), más la superficie sin derecho
+que se reactive y la nueva superficie externa.<br>
 - La diferencia entre ambos valores refleja el cambio estructural del modelo, no solo
 el efecto de la superficie nueva.</p>
 <p style="margin:0 0 0.6rem 0;"><b>Sobre las ayudas asociadas ganaderas</b><br>
@@ -103,8 +106,10 @@ no pueden incorporarse al modelo de pago por superficie y se identifican
 explícitamente en los resultados, separadas de las exclusiones por criterio del usuario.</p>
 <p style="margin:0 0 0.6rem 0;"><b>Superficie ABRS sin derecho</b><br>
 La superficie ABRS declarada pero sin derecho asignado (SUP_Det_Ctr_ABRS > DERECHOS)
-ya está incluida en el denominador del modelo simulado. Al seleccionar esta opción,
-el análisis muestra explícitamente cuánta superficie adicional se activa por territorio.</p>
+hoy no genera pago y, por defecto, queda fuera del denominador del modelo simulado.
+Al seleccionar esta opción se reactiva esa superficie (total o parcialmente, según las
+hectáreas elegidas): se reparte entre los titulares que tienen exceso, en proporción al
+exceso de cada uno, y entra en el denominador, lo que reduce el valor por hectárea.</p>
 <p style="margin:0 0 0.6rem 0;"><b>Nueva superficie de viñedo, frutales u hortícolas</b><br>
 Estas superficies añaden nuevas explotaciones al sistema (actualmente fuera del régimen
 de pagos directos). Su número exacto es desconocido: la estimación se basa en la
@@ -333,9 +338,9 @@ if not accion_activa:
 # ═══ Lógica de simulación combinada ════════════════════════════════════════
 
 if simular:
-    # Solo viñedo, frutales, hortícolas son verdaderamente "nuevas".
-    # "Superficie ABRS sin derecho" ya está en SUP_Det_Ctr_ABRS y se activa
-    # automáticamente al usar el modelo de pago único por superficie.
+    # Viñedo, frutales y hortícolas son superficie nueva (externa al padrón).
+    # "Superficie ABRS sin derecho" es superficie ya declarada pero sin derecho:
+    # hoy no genera pago y solo se reactiva si el usuario la selecciona.
     TIPOS_EXTERNOS = {"Viñedo y Txakoli", "Frutales y frutos secos", "Hortícolas"}
     total_nuevas_ha_externas = sum(
         ha for tipo, ha in nuevas_ha_por_tipo.items()
@@ -349,28 +354,33 @@ if simular:
         benef_activos = benef[~mask_excl].copy()
         excluidos_df = benef[mask_excl].copy()
         excluidos_df["IMP_SIMULADO"] = 0.0
+        excluidos_df["SUP_ACTIVABLE"] = 0.0
     else:
         benef_activos = benef.copy()
         excluidos_df = pd.DataFrame()
 
-    # PASO 2: superficie sobre los activos (solo nuevas externas al denominador).
+    # PASO 2: reparto por superficie activable sobre los activos.
     # El presupuesto se mantiene constante = total del subconjunto ANTES de
     # excluir por umbral, de modo que el importe de las explotaciones excluidas
     # se redistribuye entre las que permanecen (en vez de perderse). Así, al
     # bajar la superficie con presupuesto fijo, el valor por hectárea sube.
-    # "Superficie ABRS sin derecho" no se suma al denominador (ya está incluida
-    # en SUP_Det_Ctr_ABRS), pero al seleccionarla también debe ejecutarse el
-    # modelo de pago por superficie para que esa superficie quede activada y el
-    # valor por hectárea se recalcule frente al modelo actual basado en derechos.
+    # La superficie activable base es min(derechos, ABRS): la que hoy genera pago.
+    # "Superficie ABRS sin derecho" no entra por defecto; si el usuario la
+    # selecciona, ha_abrs_sin_derecho hectáreas del exceso se reactivan y se
+    # reparten titular a titular (en proporción al exceso) dentro del motor.
     presupuesto_constante = float(benef["IMP_AYUDA_TOTAL"].sum())
     if total_nuevas_ha_externas > 0 or umbral > 0 or ha_abrs_sin_derecho > 0:
         df_activos_sim, nuevo_valor_ha, coste_nueva_sup = simular_superficie(
             benef_activos, total_nuevas_ha_externas,
             presupuesto_total=presupuesto_constante,
+            ha_abrs_sin_derecho_reactivada=ha_abrs_sin_derecho,
         )
     else:
         df_activos_sim = benef_activos.copy()
         df_activos_sim["IMP_SIMULADO"] = df_activos_sim["IMP_AYUDA_TOTAL"].copy()
+        df_activos_sim["SUP_ACTIVABLE"] = (
+            df_activos_sim[["DERECHOS", "SUP_Det_Ctr_ABRS"]].fillna(0).min(axis=1)
+        )
         nuevo_valor_ha = 0.0
         coste_nueva_sup = 0.0
 
@@ -513,7 +523,10 @@ if "sim_df" in st.session_state and "sim_params" in st.session_state:
 
     linea_valor_ha = ""
     if p["nuevo_valor_ha"] > 0:
-        sup_total_actual = float(benef_global["SUP_Det_Ctr_ABRS"].fillna(0).sum())
+        # Superficie activada actual = min(derechos, ABRS): la que hoy genera pago.
+        sup_total_actual = float(
+            benef_global[["DERECHOS", "SUP_Det_Ctr_ABRS"]].fillna(0).min(axis=1).sum()
+        )
         val_actual_banner = (
             float(benef_global["IMP_AYUDA_TOTAL"].sum()) / sup_total_actual
             if sup_total_actual > 0 else 0.0
@@ -594,10 +607,17 @@ del Ministerio de Agricultura.
         )
 
     def _sup_simulada(df_in, ha_externas_terr: float):
-        """SUP_Det_Ctr_ABRS de activos (incluye ABRS sin derecho) + nuevas externas."""
-        base = float(
-            df_in[df_in["IMP_SIMULADO"] > 0]["SUP_Det_Ctr_ABRS"].fillna(0).sum()
-        )
+        """Superficie activable simulada (SUP_ACTIVABLE, ya calculada por el motor:
+        min(derechos, ABRS) + sin derecho reactivada) + nuevas externas."""
+        act = df_in[df_in["IMP_SIMULADO"] > 0]
+        if "SUP_ACTIVABLE" in act.columns:
+            base = float(act["SUP_ACTIVABLE"].fillna(0).sum())
+        elif {"DERECHOS", "SUP_Det_Ctr_ABRS"}.issubset(act.columns):
+            base = float(
+                act[["DERECHOS", "SUP_Det_Ctr_ABRS"]].fillna(0).min(axis=1).sum()
+            )
+        else:
+            base = 0.0
         return base + ha_externas_terr
 
     def _sup_sim_con_derecho(df_in):
@@ -622,10 +642,13 @@ del Ministerio de Agricultura.
         df_s = df_sim if terr == "Euskadi" else df_sim[df_sim["TH_DESC"] == terr]
         n_a = int((df_a["IMP_AYUDA_TOTAL"] > 0).sum())
         n_s = int((df_s["IMP_SIMULADO"] > 0).sum())
+        ha_ext_terr = ha_externas_por_terr.get(terr, 0.0)
         sup_act = _sup_activada_actual(df_a[df_a["IMP_AYUDA_TOTAL"] > 0])
-        sup_sim = _sup_simulada(df_s, ha_externas_por_terr.get(terr, 0.0))
+        sup_sim = _sup_simulada(df_s, ha_ext_terr)
         sup_sim_con = _sup_sim_con_derecho(df_s)
-        sup_sim_sin = max(0.0, sup_sim - sup_sim_con)
+        # "Sup. sin derecho (incl.)" = solo la superficie sin derecho reactivada,
+        # sin contar la nueva superficie externa.
+        sup_sim_sin = max(0.0, sup_sim - ha_ext_terr - sup_sim_con)
         imp_med_a = (
             float(df_a[df_a["IMP_AYUDA_TOTAL"] > 0]["IMP_AYUDA_TOTAL"].mean())
             if n_a > 0 else 0.0
@@ -703,12 +726,14 @@ del Ministerio de Agricultura.
 
     st.caption(
         "La **Sup. activada actual** es la que hoy genera pago, limitada por los "
-        "derechos: min(derechos, superficie ABRS). La **Sup. activada simulada** usa la "
-        "superficie ABRS completa, porque el modelo paga por hectárea; por eso incluye la "
-        "superficie ABRS **sin derecho asignado** (columna **Sup. sin derecho (incl.)**), "
-        "que hoy no se activa. Esa es la razón de que la superficie simulada pueda superar "
-        "a la actual aunque se excluyan explotaciones por el umbral: el umbral la reduce, "
-        "pero la activación de la superficie sin derecho la compensa hasta umbrales altos."
+        "derechos: min(derechos, superficie ABRS). La **Sup. activada simulada** parte "
+        "de esa misma base activable (min(derechos, ABRS) de las explotaciones que "
+        "permanecen). La superficie ABRS **sin derecho asignado** no se activa por defecto; "
+        "solo se suma (columna **Sup. sin derecho (incl.)**) si se reactiva con la acción "
+        "«Superficie ABRS sin derecho», repartida entre los titulares con exceso en "
+        "proporción al exceso de cada uno. Por eso, salvo que se reactive esa superficie o "
+        "se incorpore superficie externa, la superficie simulada no supera a la actual y el "
+        "umbral la reduce."
     )
 
     st.markdown("<br>", unsafe_allow_html=True)
@@ -745,10 +770,11 @@ del Ministerio de Agricultura.
     titulo_subapartado("Valor del derecho — Euskadi")
 
     nuevo_vh = p["nuevo_valor_ha"]
-    abrs_activos = float(
-        df_sim[df_sim["IMP_SIMULADO"] > 0]["SUP_Det_Ctr_ABRS"].fillna(0).sum()
+    sup_activable_sim = (
+        float(df_sim[df_sim["IMP_SIMULADO"] > 0]["SUP_ACTIVABLE"].fillna(0).sum())
+        if "SUP_ACTIVABLE" in df_sim.columns else 0.0
     )
-    derechos_sim_aprox = abrs_activos + p.get("total_nuevas_ha_externas", 0.0)
+    derechos_sim_aprox = sup_activable_sim + p.get("total_nuevas_ha_externas", 0.0)
 
     c1, c2, c3, c4 = st.columns(4)
     c1.markdown(

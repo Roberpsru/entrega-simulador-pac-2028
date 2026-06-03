@@ -53,7 +53,9 @@ def simular(df: pd.DataFrame, excluir):
         d = df_sim if terr == "Euskadi" else df_sim[df_sim["TH_DESC"] == terr]
         act_t = d[d["IMP_SIMULADO"] > 0]
         n_s = int(len(act_t))
-        sup_sim = float(act_t["SUP_Det_Ctr_ABRS"].fillna(0).sum())
+        # Superficie activable simulada (SUP_ACTIVABLE = min(derechos, ABRS) +
+        # sin derecho reactivada; aquí sin reactivación = min(derechos, ABRS)).
+        sup_sim = float(act_t["SUP_ACTIVABLE"].fillna(0).sum())
         imp_med = float(act_t["IMP_SIMULADO"].mean()) if n_s else 0.0
         filas.append({
             "Territorio": terr,

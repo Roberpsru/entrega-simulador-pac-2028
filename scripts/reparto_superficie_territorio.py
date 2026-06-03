@@ -82,8 +82,9 @@ def main():
     NOTA = ("Externas (viñedo, frutales, hortícolas): potencial SIGPAC − superficie declarada, "
             "repartido por proporción del potencial SIGPAC de cada territorio (agregado, no por "
             "titular). ABRS sin derecho: Σ(SUP_Det_Ctr_ABRS − DERECHOS)≥0 sobre la base >300, "
-            "atribuida titular-a-titular por TH; ya está incluida en SUP_Det_Ctr_ABRS, por lo que "
-            "NO se suma al denominador del modelo (es activación de superficie ya existente).")
+            "atribuida titular-a-titular por TH; en el modelo de pago por superficie activable "
+            "min(derechos, ABRS) NO genera pago por defecto y solo se suma al denominador si se "
+            "reactiva con el Filtro B (repartida titular a titular según su exceso).")
 
     def _eu(v):
         return f"{v:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".") if isinstance(v, float) else str(v)

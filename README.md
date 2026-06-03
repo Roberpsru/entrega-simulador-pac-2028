@@ -105,7 +105,7 @@ entrega-simulador-pac-2028/
 
 ## Metodología
 
-Las simulaciones adoptan un **modelo de pago único por superficie ABRS**: el presupuesto total se divide entre la superficie ABRS elegible (incluida la que carece de derechos) más la nueva superficie externa incorporada. La lógica está en `src/simulation.py`.
+Las simulaciones adoptan un **modelo de pago único por superficie activable**: el presupuesto total se divide entre la superficie que hoy genera pago —`min(derechos, superficie ABRS)` por titular— más la superficie ABRS sin derecho que se reactive (Filtro B, repartida titular a titular según su exceso) y la nueva superficie externa incorporada. La superficie ABRS declarada por encima de los derechos no entra en el denominador salvo que se reactive explícitamente. La lógica está en `src/simulation.py`.
 
 La aplicación es un **apoyo a la decisión**, no una herramienta normativa.
 

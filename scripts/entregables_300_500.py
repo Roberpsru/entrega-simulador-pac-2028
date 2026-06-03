@@ -32,12 +32,14 @@ OUT2 = RAIZ / "comparativa_300_vs_500.xlsx"
 
 ORDEN = ["Araba", "Gipuzkoa", "Bizkaia", "Otro"]
 
-# Validación obligatoria (cifras de la app) para umbral 300: benef, sup activada, € medio
+# Validación obligatoria (cifras de la app) para umbral 300: benef, sup activada, € medio.
+# Superficie activada simulada = min(derechos, ABRS) por titular (la que hoy genera pago);
+# la ABRS sin derecho ya NO entra en el denominador salvo reactivación por Filtro B.
 VALID_300 = {
-    "Araba":    (1518,  94487.59, 17229.99),
-    "Bizkaia":  (2181,  27781.65,  3526.02),
-    "Gipuzkoa": (2634,  30734.97,  3229.97),
-    "Euskadi":  (6333, 153004.21,  6687.69),
+    "Araba":    (1518,  87830.18, 17620.97),
+    "Bizkaia":  (2181,  23919.95,  3340.12),
+    "Gipuzkoa": (2634,  27318.00,  3158.57),
+    "Euskadi":  (6333, 139068.13,  6687.69),
 }
 
 
@@ -118,7 +120,7 @@ def correr_simulador(df: pd.DataFrame, umbral: float) -> pd.DataFrame:
         d = df_sim if terr == "Euskadi" else df_sim[df_sim["TH_DESC"] == terr]
         activos_t = d[d["IMP_SIMULADO"] > 0]
         n_s = int(len(activos_t))
-        sup_sim = float(activos_t["SUP_Det_Ctr_ABRS"].fillna(0).sum())   # activada simulada
+        sup_sim = float(activos_t["SUP_ACTIVABLE"].fillna(0).sum())   # activada simulada = min(der, ABRS)
         imp_med = float(activos_t["IMP_SIMULADO"].mean()) if n_s else 0.0
         filas.append({
             "Territorio": terr,
